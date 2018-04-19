@@ -2,7 +2,7 @@
  * @Author: Nianko <nianko>
  * @Date:   2018-04-19T10:20:09+08:00
  * @Last modified by:   nianko
- * @Last modified time: 2018-04-19T17:41:31+08:00
+ * @Last modified time: 2018-04-19T18:38:20+08:00
  */
 
 //9*9棋盘，e代表未落子
@@ -123,6 +123,20 @@ function moveInChess(role, i, j){
 }
 
 /**
+ * [get_list 获取直线上获胜方式]
+ * @method get_list
+ * @param  {[string]} user  ['x' or 'o']
+ * @param  {[array]} list  [棋盘信息]
+ * @param  {[number]} index [行或列索引]
+ * @return {[type]}
+ */
+function get_list(user, list, index){
+  let owns = list.filter(item=>item===user);
+  index_e = list.map((item, i)=>item==='e'&&i).filter(i=>typeof i === 'number');
+  return 2===owns.length&&1===index_e.length&&[index_e[0], index];
+}
+
+/**
  * [winMethod 获取胜利的方式]
  * @method winMethod
  * @param  {[string]}  user ['x' or 'o']
@@ -131,32 +145,42 @@ function moveInChess(role, i, j){
  */
 function winMethod(user, chessArray){
   let list = []
+
+  // x轴方向
   chessArray.map((rows, i)=>{
-    let index_u = rows.map((item, j)=>item===user&&j).filter(j=>typeof j === 'number');
-    let index_e = rows.map((item, j)=>item==='e'&&j).filter(j=>typeof j === 'number');
-    2===index_u.length&&1===index_e.length&&list.push([i,index_e[0]]);
+    let result = get_list(user, rows, i);
+    result&&list.push(result);
   });
 
-  let col_indexs = [0, 1, 2];
-  col_indexs.map((j)=>{
-    // let cols = [
-    //   chessArray[0][j],chessArray[1][j],chessArray[2][j]
-    // ];
-    let cols = getColumns(j);
-    let owns = cols.filter(item=>item===user);
-    let index_e = cols.map((item, index)=>item==='e'&&index).filter(i=>typeof i === 'number');
-    2===owns.length&&1===index_e.length&&list.push([index_e[0],j]);
-  });
+  // y轴方向
+  let c_len = chessArray[0].length;
+  while (c_len) {
+    c_len--;
+    let cols = getColumns(c_len);
+    let result = get_list(user, cols, c_len);
+    result&&list.push(result);
+  }
 
-  let obliques = [
-    [chessArray[0][0],chessArray[1][1],chessArray[2][2]],
-    [chessArray[0][2],chessArray[1][1],chessArray[2][0]]
-  ]; // 棋盘斜线上数据
-  obliques.map((arr, index)=>{
-    let owns = arr.filter(item=>item===user);
-    let index_e = arr.map((item, idx)=>'e'===item&&idx).filter(i=>typeof i === 'number');
-    0===index&&2===owns.length&&1===index_e.length&&list.push([index_e[0],index_e[0]]);
-    1===index&&2===owns.length&&1===index_e.length&&list.push([index_e[0],index_e[0]===2?0:index_e[0]===0?2:1]);
+  // 斜线
+  chessArray.map((rows, i)=>{
+    rows.map((col, j)=>{
+      // 正斜线
+      let pos = getPositiveLine(i, j);
+      if(-1!==pos[0]){
+        let index = pos.findIndex(elm=>'e'===elm);
+        let result = get_list(user, pos, index);
+        result&&list.push(result);
+      }
+
+      // 反斜线
+      let rev = getReverseLine(i, j);
+      if(-1!==rev[0]){
+        let l = rows.length;
+        let index = rev.findIndex(elm=>'e'===elm);
+        let result = get_list(user, rev, l-index-1);
+        result&&list.push(result);
+      }
+    });
   });
 
   victorys[user] = uniqueArray(list);
