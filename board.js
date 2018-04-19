@@ -2,7 +2,7 @@
  * @Author: Nianko <nianko>
  * @Date:   2018-04-19T10:20:09+08:00
  * @Last modified by:   nianko
- * @Last modified time: 2018-04-19T18:38:20+08:00
+ * @Last modified time: 2018-04-19T18:46:07+08:00
  */
 
 //9*9棋盘，e代表未落子
@@ -162,7 +162,7 @@ function winMethod(user, chessArray){
   }
 
   // 斜线
-  chessArray.map((rows, i)=>{
+  chessArray.map((rows, i)=>{ // chessArray map start
     rows.map((col, j)=>{
       // 正斜线
       let pos = getPositiveLine(i, j);
@@ -181,10 +181,10 @@ function winMethod(user, chessArray){
         result&&list.push(result);
       }
     });
-  });
+  }); // chessArray map end
 
-  victorys[user] = uniqueArray(list);
-  showUserInfo(victorys[user]);
+  victorys[user] = uniqueArray(list); // array去重
+  showUserInfo(victorys[user]);       // user info
 }
 
 /**
@@ -252,12 +252,7 @@ function getReverseLine(x, y){
  */
 function getResult(role, i, j){
   let code = pieces[i][j];    // 当前落下的棋子
-  // let columns = [pieces[0][j],pieces[1][j],pieces[2][j]]; // 棋盘上当前列数据
   let columns = getColumns(j); // 棋盘上当前列数据
-  // let obliques = [
-  //   [pieces[0][0],pieces[1][1],pieces[2][2]],
-  //   [pieces[0][2],pieces[1][1],pieces[2][0]]
-  // ]; // 棋盘斜线上数据
   let obliques = [
     getPositiveLine(i, j),
     getReverseLine(i, j)
