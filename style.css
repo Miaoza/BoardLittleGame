@@ -1,0 +1,35 @@
+/**
+ * @Author: Nianko <nianko>
+ * @Date:   2018-04-19T10:19:58+08:00
+ * @Last modified by:   nianko
+ * @Last modified time: 2018-04-19T12:20:22+08:00
+ */
+.container{
+  width: 140px;
+  height: 126px;
+  vertical-align: middle;
+  border: 1px solid #ccc;
+  margin: 50px auto 20px;
+  padding: 20px;
+}
+.container .rows{
+  width: 100px;
+  display: flex;
+  margin: auto;
+  width: 120px;
+}
+.container .rows .cols{
+  cursor: pointer;
+  flex: 1;
+  text-align: center;
+  border: 1px solid #999;
+  height: 40px;
+  line-height: 40px;
+}
+.toast{
+  width: 320px;
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+  margin: 5px auto;
+}
