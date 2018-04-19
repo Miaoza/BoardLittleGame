@@ -2,16 +2,16 @@
  * @Author: Nianko <nianko>
  * @Date:   2018-04-19T10:20:09+08:00
  * @Last modified by:   nianko
- * @Last modified time: 2018-04-19T15:01:01+08:00
+ * @Last modified time: 2018-04-19T15:33:09+08:00
  */
 
 //9*9棋盘，e代表未落子
-let pieces = [];
-let user = ''; // 玩家x和o，默认x先落子
-let container = document.getElementsByClassName("container")[0]; // div container
-let toast = document.getElementsByClassName('toast')[0]; // info show dom
-let is_success = false;
-let victorys = {
+let container = null;   // div container
+let toast = null;       // info show dom
+let pieces = [];        // 棋盘信息
+let user = '';          // 玩家x和o，默认x先落子
+let is_success = false; // 是否有人获胜
+let victorys = {        // 获胜方式
   'x': [],
   'o': []
 }
@@ -27,6 +27,8 @@ function load(){
  * @return {[type]}
  */
 function init(){
+  container = document.getElementsByClassName("container")[0];
+  toast = document.getElementsByClassName('toast')[0];
   pieces = [
     ['e','e','e'],
     ['e','e','e'],
@@ -38,30 +40,42 @@ function init(){
     'x': [],
     'o': []
   };
+  createChessboard(); // 创建棋盘
+}
 
+/**
+ * [createChessboard 创建棋盘]
+ * @method createChessboard
+ * @return {[type]}
+ */
+let createChessboard = ()=>{
   let frag = document.createDocumentFragment();
-  pieces.map((rows, i)=>{
+
+  pieces.map((rows, i)=>{ // pieces map start
+
     let _frag = document.createDocumentFragment();
     let row = document.createElement('div');
+
     rows.map((col, j)=>{
       let el = document.createElement('div');
-      let node = document.createTextNode(col);
-      el.appendChild(node);
+      el.innerHTML = col;
       el.setAttribute('class', 'cols');
       _frag.appendChild(el);
-      el.onclick = function(){
+      el.onclick = function(){ // 玩家落子
         moveInChess(user, i, j);
       }
       el = null;
-      node = null;
       return _frag;
     });
+
     row.appendChild(_frag);
     row.setAttribute('class', 'rows');
     frag.appendChild(row);
     row = null;
     _frag = null;
-  });
+
+  }); // pieces map end
+
   container.appendChild(frag);
   showUserInfo([]);
   frag = null;
@@ -73,9 +87,7 @@ function init(){
  * @param  {[array]}     victorys [获胜方式]
  * @return {[type]}
  */
-let showUserInfo = (victorys)=>{
-    toast.innerHTML = '当前玩家：'+user+'，获胜方式：'+JSON.stringify(victorys);
-}
+let showUserInfo = (victorys)=>toast.innerHTML = '当前玩家：'+user+'，获胜方式：'+JSON.stringify(victorys);
 
 /**
  * [moveInChess 落子]
@@ -87,20 +99,12 @@ let moveInChess = (role, i, j)=>{
   if('e' === pieces[i][j]){
     pieces[i][j]=role;
     container.children[i].children[j].innerHTML = role;
+
     getResult(role, i, j);
   }else {
     alert("此处已落子，请重新落子");
   }
 }
-
-/**
- * [isWin 是否取得胜利]
- * @method isWin
- * @param  {[type]}  code [当前落下的棋子]
- * @param  {[array]}  list [可以连线的数组]
- * @return {Boolean}
- */
-let isWin = (code, list) => (list.every((letter)=>(code===letter)));
 
 /**
  * [winMethod 获取胜利的方式]
@@ -147,10 +151,16 @@ let winMethod = (user) => {
  * @param  {[array]}    _arr [需要去重的数组]
  * @return {[type]}
  */
-let uniqueArray = (_arr)=>{
-  let arr = _arr.map((item)=>(item.join('')));
-  return [...new Set(arr)].map((item)=>(item.split('').map((val)=>+val)));
-}
+let uniqueArray = arr=>[...new Set(arr.map(item=>item.join('')))].map(item=>item.split('').map(val=>+val));
+
+/**
+ * [isWin 是否取得胜利]
+ * @method isWin
+ * @param  {[type]}  code [当前落下的棋子]
+ * @param  {[array]}  list [可以连线的数组]
+ * @return {Boolean}
+ */
+let isWin = (code, list) => list.every((letter)=>(code===letter));
 
 /**
  * [获取落子后棋盘结果]
@@ -176,6 +186,12 @@ let getResult = function(role, i, j){
     init();
     return ;
   }else{
+    let now_pieces = pieces.map((item)=>(item.join(""))).join("").split("");
+    if(!now_pieces.includes('e')){
+      alert('无可落子棋格！');
+      container.innerHTML = '';
+      init();
+    }
     user = 'x'===role?'o':'x';
     winMethod(user);
   }
