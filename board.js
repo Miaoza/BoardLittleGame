@@ -5,7 +5,7 @@
  * @Last modified time: 2018-04-19T18:46:07+08:00
  */
 
-//9*9棋盘，e代表未落子
+// 9*9棋盘，e代表未落子
 let container = null;   // div container
 let toast = null;       // info show dom
 let pieces = [];        // 棋盘信息
@@ -36,7 +36,7 @@ let showUserInfo = (_victorys)=>toast.innerHTML = '当前玩家：'+user+'，获
 /**
  * [uniqueArray 数组去重]
  * @method uniqueArray
- * @param  {[array]}    _arr [需要去重的数组]
+ * @param  {[array]}    arr [需要去重的数组]
  * @return {[type]}
  */
 let uniqueArray = arr=>[...new Set(arr.map(item=>item.join('')))].map(item=>item.split('').map(val=>+val));
